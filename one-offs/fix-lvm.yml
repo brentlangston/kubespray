@@ -1,0 +1,27 @@
+---
+- hosts: all
+  vars:
+    current_disk: '/dev/sda2'
+    new_disk: '/dev/sdd'
+    extend_vgname: 'rootvg'
+    extend_lvname: 'lv_var'
+    lvextend_size: '+100%FREE'
+    filesystem: 'xfs'
+  tasks:
+
+    - name: Extend a volume group
+      lvg:
+        vg: "{{ extend_vgname }}"
+        pvs: "{{ current_disk }},{{ new_disk }}"
+
+    - name: extending existing filesystem
+      lvol: 
+        vg: "{{ extend_vgname }}"
+        lv: "{{ extend_lvname }}"
+        size: "{{ lvextend_size }}"
+
+    - name: extend filesystem
+      filesystem: 
+        dev: /dev/{{ extend_vgname }}/{{ extend_lvname }}
+        fstype: "{{ filesystem }}"
+        resizefs: yes

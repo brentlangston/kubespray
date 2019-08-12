@@ -1,0 +1,14 @@
+---
+- hosts: all
+  tasks:
+          # upload ssh key                
+          - authorized_key:
+                  exclusive: no
+                  user: root
+                  state: present
+                  manage_dir: yes
+                  key: "{{ item }}"
+            with_items:
+              - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDyn4HXzERJ16e1crVh/Myt/zurZ4xLdgbW1Hz3VvhIbn5ZzMnGJtsCPFpRvJYmjh2PFgYvjvVAby2Lp0LkucpxcYR19MGr0ou1NpaeQch2vRqCj4IjBSt4gbrC2+CS5JbMD2FqAbH16dk71sYifLKXb3Z3j2tNfDkStvIT9kE3LQQHq+ZAZQSyoIwqYxtljNIMVZ0GyXilS4UFFr2yA44Fu+co0hCQSIw7+0WqkBKLMzRLSTxL94p6+bas7/LL5GOGV/zJ6PSXQEIPBnsTD7f/c63AYqJ+fbXniH2zbNT80obPrX2pLB2Ia5+A4ZUdYl8+5DBiyN1EYT/Oln66YACX brent@Tests-MacBook-Pro.local
+
+

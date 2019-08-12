@@ -1,0 +1,11 @@
+---
+- hosts: all
+  tasks:
+    - file:
+        path: /etc/systemd/system/docker.service
+        state: absent
+
+    - yum:
+        name: docker-ce
+        state: absent
+

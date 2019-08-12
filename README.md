@@ -29,17 +29,24 @@ To deploy the cluster you can use :
 
     # Update Ansible inventory file with inventory builder
     declare -a IPS=(10.10.1.3 10.10.1.4 10.10.1.5)
+    pip3 install -r contrib/inventory_builder/requirements.txt
     CONFIG_FILE=inventory/mycluster/hosts.yml python3 contrib/inventory_builder/inventory.py ${IPS[@]}
 
     # Review and change parameters under ``inventory/mycluster/group_vars``
     cat inventory/mycluster/group_vars/all/all.yml
     cat inventory/mycluster/group_vars/k8s-cluster/k8s-cluster.yml
 
+    # unlock ssh, meaning add your key to /root/.ssh/authorized_keys to make
+    # these rapid fire ansible commands work better.
+    # sub your ADM account ID. You'll be prompted for your ADM password. Tap enter again to use that
+    # as the sudo password also.
+    ansible-playbook -i inventory/mycluster/hosts.yml --become --become-user=root --become-method=dzdo --ask-become-pass ssh-unlock.yml -u usahuq3 -k -D
+
     # Deploy Kubespray with Ansible Playbook - run the playbook as root
     # The option `--become` is required, as for example writing SSL keys in /etc/,
     # installing packages and interacting with various systemd daemons.
     # Without --become the playbook will fail to run!
-    ansible-playbook -i inventory/mycluster/hosts.yml --become --become-user=root cluster.yml
+    ansible-playbook -i inventory/mycluster/hosts.yml -u root cluster.yml
 
 Note: When Ansible is already installed via system packages on the control machine, other python packages installed via `sudo pip install -r requirements.txt` will go to a different directory tree (e.g. `/usr/local/lib/python2.7/dist-packages` on Ubuntu) from Ansible's (e.g. `/usr/lib/python2.7/dist-packages/ansible` still on Ubuntu).
 As a consequence, `ansible-playbook` command will fail with:

@@ -38,9 +38,9 @@ To deploy the cluster you can use :
 
     # unlock ssh, meaning add your key to /root/.ssh/authorized_keys to make
     # these rapid fire ansible commands work better.
-    # sub your ADM account ID. You'll be prompted for your ADM password. Tap enter again to use that
+    # sub your admin account ID. You'll be prompted for your admin password. Tap enter again to use that
     # as the sudo password also.
-    ansible-playbook -i inventory/mycluster/hosts.yml --become --become-user=root --become-method=dzdo --ask-become-pass ssh-unlock.yml -u usahuq3 -k -D
+    ansible-playbook -i inventory/mycluster/hosts.yml --become --become-user=root --become-method=dzdo --ask-become-pass ssh-unlock.yml -u ${ACCOUNT} -k -D
 
     # Deploy Kubespray with Ansible Playbook - run the playbook as root
     # The option `--become` is required, as for example writing SSL keys in /etc/,

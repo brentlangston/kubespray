@@ -1,6 +1,0 @@
----
-- hosts: all
-  tasks:
-    - file:
-        path: /var/run/reboot-required
-        state: touch

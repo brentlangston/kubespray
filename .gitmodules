@@ -1,0 +1,3 @@
+[submodule "magic-infra-automation"]
+	path = magic-infra-automation
+	url = git@github.com:brentlangston/magic-infra-automation.git

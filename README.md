@@ -15,6 +15,12 @@ You can get your invite [here](http://slack.k8s.io/)
 Quick Start
 -----------
 
+Make sure to check out the Magic Infrastructure Automation submodule after cloning
+this repo:
+```
+git submodule update --init --recursive
+```
+
 To deploy the cluster you can use :
 
 ### Ansible
@@ -40,13 +46,13 @@ To deploy the cluster you can use :
     # these rapid fire ansible commands work better.
     # sub your admin account ID. You'll be prompted for your admin password. Tap enter again to use that
     # as the sudo password also.
-    ansible-playbook -i inventory/mycluster/hosts.yml --become --become-user=root --become-method=dzdo --ask-become-pass ssh-unlock.yml -u ${ACCOUNT} -k -D
+    ansible-playbook -i magic-infra-automation/inventory/southbelt/prod.yml --become --become-user=root --become-method=dzdo --ask-become-pass ssh-unlock.yml -u ${ACCOUNT} -k -D
 
     # Deploy Kubespray with Ansible Playbook - run the playbook as root
     # The option `--become` is required, as for example writing SSL keys in /etc/,
     # installing packages and interacting with various systemd daemons.
     # Without --become the playbook will fail to run!
-    ansible-playbook -i inventory/mycluster/hosts.yml -u root cluster.yml
+    ansible-playbook -i magic-infra-automation/inventory/southbelt/prod.yml -u root cluster.yml
 
 Note: When Ansible is already installed via system packages on the control machine, other python packages installed via `sudo pip install -r requirements.txt` will go to a different directory tree (e.g. `/usr/local/lib/python2.7/dist-packages` on Ubuntu) from Ansible's (e.g. `/usr/lib/python2.7/dist-packages/ansible` still on Ubuntu).
 As a consequence, `ansible-playbook` command will fail with:

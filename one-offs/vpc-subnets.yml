@@ -1,0 +1,107 @@
+---
+- hosts: localhost
+  vars:
+    vpc_id: vpc-0d568212ac45f4a55
+    private_gw: vgw-09c60c4c8678056a9
+  tasks:
+    - name: Create Internet Gateway
+      ec2_vpc_igw:
+        vpc_id: "{{ vpc_id }}"
+        state: present
+      register: igw
+        
+    - name: Create public EKS subnet 1a
+      ec2_vpc_subnet:
+        state: present
+        vpc_id: "{{ vpc_id }}"
+        cidr: 10.132.192.0/22
+        map_public: true
+        resource_tags:
+          Name: CorpEKSPreProdUsEast-1a-public
+      register: public_subnet_1a
+
+    - name: Create public EKS subnet 1b
+      ec2_vpc_subnet:
+        state: present
+        vpc_id: "{{ vpc_id }}"
+        cidr: 10.132.196.0/22
+        map_public: true
+        resource_tags:
+          Name: CorpEKSPreProdUsEast-1b-public
+      register: public_subnet_1b
+
+    - name: Create public EKS subnet 1c
+      ec2_vpc_subnet:
+        state: present
+        vpc_id: "{{ vpc_id }}"
+        cidr: 10.132.200.0/22
+        map_public: true
+        resource_tags:
+          Name: CorpEKSPreProdUsEast-1c-public
+      register: public_subnet_1c
+
+    - name: Create private EKS subnet 1a
+      ec2_vpc_subnet:
+        state: present
+        vpc_id: "{{ vpc_id }}"
+        cidr: 10.132.204.0/22
+        resource_tags:
+          Name: CorpEKSPreProdUsEast-1a-private
+      register: private_subnet_1a
+
+    - name: Create private EKS subnet 1b
+      ec2_vpc_subnet:
+        state: present
+        vpc_id: "{{ vpc_id }}"
+        cidr: 10.132.208.0/22
+        resource_tags:
+          Name: CorpEKSPreProdUsEast-1b-private
+      register: private_subnet_1b
+
+    - name: Create private EKS subnet 1c
+      ec2_vpc_subnet:
+        state: present
+        vpc_id: "{{ vpc_id }}"
+        cidr: 10.132.212.0/22
+        resource_tags:
+          Name: CorpEKSPreProdUsEast-1c-private
+      register: private_subnet_1c
+
+    - name: Create new nat gateway and allocate new EIP 1a
+      ec2_vpc_nat_gateway:
+        state: present
+        subnet_id: "{{ public_subnet_1a.subnet.id }}"
+        wait: yes
+        if_exist_do_not_create: true
+       
+    - name: Create new nat gateway and allocate new EIP 1b
+      ec2_vpc_nat_gateway:
+        state: present
+        subnet_id: "{{ public_subnet_1b.subnet.id }}"
+        wait: yes
+        if_exist_do_not_create: true
+         
+    - name: Create new nat gateway and allocate new EIP 1c 
+      ec2_vpc_nat_gateway:
+        state: present
+        subnet_id: "{{ public_subnet_1c.subnet.id }}"
+        wait: yes
+        if_exist_do_not_create: true
+
+    - name: Set up subnet route table
+      ec2_vpc_route_table:
+        vpc_id: "{{ vpc_id }}"
+        tags:
+          Name: Main-RT
+        subnets:
+          - "{{ public_subnet_1a.subnet.id }}"
+          - "{{ public_subnet_1b.subnet.id }}"
+          - "{{ public_subnet_1c.subnet.id }}"
+          - "{{ private_subnet_1a.subnet.id }}"
+          - "{{ private_subnet_1b.subnet.id }}"
+          - "{{ private_subnet_1c.subnet.id }}"
+        routes:
+          - dest: 10.0.0.0/8
+            gateway_id: "{{ private_gw }}"
+          - dest: 0.0.0.0/0
+            gateway_id: "{{ igw.gateway_id }}"
